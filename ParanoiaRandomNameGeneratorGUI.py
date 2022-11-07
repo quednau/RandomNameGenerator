@@ -77,16 +77,16 @@ class WindowMaker(QWidget):
 
     def on_click(self, check, label):
         if check:
-            print("Paranoia")
+            if debug_mode == True: print("Paranoia")
             sector_generated = generate_sector_name()
             clone_nr_generated = str(generate_clone_number())
             name = generate_first_name_rnd() + "-" + sector_generated + "-" + clone_nr_generated
             self.result_label.setText(name)
-            print(name)
+            if debug_mode == True: print(name)
         else:
             name = generate_fantasy()
             self.result_label.setText(name.capitalize())
-            print(name)
+            if debug_mode == True: print(name)
     
     def button_confirm_pressed(self):
             #sector_generated = generate_sector_name()
@@ -145,7 +145,7 @@ def generate_fantasy():
         name_parts = name_parts - 1
         pick = random.randint(0, max)
         name = name + fantasy_parts[pick]
-        print(name)
+        if debug_mode == True: print(name)
     return name
     
 
@@ -200,11 +200,12 @@ def generate_first_name(user_input):
 def generate_sector_name():
     max = len(sector_code) - 1
     max_str = str(max)
-    print("max: " + max_str)
+    if debug_mode == True: print("max: " + max_str)
     pick = random.randint(1, max)
     pick_str = str(pick)
-    print("pick: " + pick_str)
-    print("pick as a string: " + sector_code[pick])
+    if debug_mode == True:
+        print("pick: " + pick_str)
+        print("pick as a string: " + sector_code[pick])
     return sector_code[pick]
 
 def generate_clone_number():
@@ -217,6 +218,9 @@ def count_first_names():
     print("Enby first names: " + str(len(first_names_n)))
 
 # Execute!
+global debug_mode
+debug_mode = False
+
 global sector_generated
 global clone_nr_generated
 sector_generated = generate_sector_name()

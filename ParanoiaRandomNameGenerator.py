@@ -63,7 +63,7 @@ def generate_clone_number():
     rcn = random.randint(1, 6)
     return str(rcn)
 
-def end_program():
+def press_any_key():
     input("Press enter to continue.")
 
 def count_first_names():
@@ -78,4 +78,4 @@ def count_first_names():
 
 while True:
     print(f'{generate_first_name(initial_input())}-{generate_sector_name()}-{generate_clone_number()}')
-    end_program()
+    press_any_key()
