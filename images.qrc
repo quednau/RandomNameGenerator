@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="images">
+        <file>bridge.png</file>
+        <file>cardboard_meme.jpg</file>
+    </qresource>
+</RCC>
