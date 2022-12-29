@@ -1,123 +1,31 @@
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QPixmap
-import sys
+#import sys
+#sys.path.append('C:\\Users\\q_jun\\AppData\\Roaming\\Python\\Python310\\site-packages\\customtkinter')
+from tkinter import *
+# TKinter "modern look" library: https://github.com/TomSchimansky/CustomTkinter
+# import customtkinter
 import random
-# Note: After 1 painful hour of troubleshooting, I learned that PyQt-tools isn't supporting Python 3.10 yet ...
-# Tutorial: https://www.pythonguis.com/tutorials/pyqt-signals-slots-events/
-# Tutorial: https://www.guru99.com/pyqt-tutorial.html
-# Tutorial-Video by Python Simplified Woman from Vancouver: https://www.youtube.com/watch?v=9iZLDnW_vwU
 
 # To Do:
+# - switch from PyQt to TKinter/customtkinter
 # - gender selection Paranoia
 
-class WindowMaker(QWidget):
-    def __init__(self): # Note: This NEEDS to exist
-        super(WindowMaker, self).__init__()
-        # Syntax: win.setGeometry(xpos, ypos, width, height)
-        self.setGeometry(750, 250, 350, 300)
-        self.setWindowTitle("RNG - Random Name Generator")
-        self.setWindowIcon(QtGui.QIcon('bridge.png'))
-        self.setStyleSheet("background: #ddccff;")
-        self.initUI()
+import logging
 
-    def initUI(self):
-        # Define upper label
-        self.intro_label = QtWidgets.QLabel(self)
-        self.intro_label.setText("Welcome to the Random Name Generator.\nChoose a theme.")
-        self.intro_label.move(20, 100) # doesn't do anything b/c layout
-        self.intro_label.setStyleSheet("margin-bottom: 10px;")
-        self.intro_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.update_intro()
-
-        #Define button(s)
-        # create a layout for radio buttons first
-        layout = QVBoxLayout()
-        #layout = QGridLayout()
-        self.setLayout(layout)
-
-        rb_fantasy = QRadioButton('Fantasy', self)
-        rb_fantasy.toggled.connect(self.update_radio)
-        rb_fantasy.toggled.connect(self.fantasy_selected)
-        rb_fantasy.setChecked(True)
-        rb_fantasy.setStyleSheet("border: 2px hidden; margin-left: auto;")
-        
-        rb_paranoia = QRadioButton('Paranoia RPG', self)
-        rb_paranoia.toggled.connect(self.update_radio)
-        rb_paranoia.toggled.connect(self.paranoia_selected) # For debugging
-        rb_paranoia.setStyleSheet("border: 2px hidden; margin-left: auto;")
-
-        # Confirm button
-        self.button_confirm = QtWidgets.QPushButton("Generate Name", self)
-        self.button_confirm.setStyleSheet("margin-top: 10px; min-height: 40px;")
-        # self.button_confirm.move(20, 160) # This doesn't do anything while in layout
-        self.button_confirm.clicked.connect(self.button_confirm_pressed)
-        self.button_confirm.clicked.connect(lambda: self.on_click(rb_paranoia.isChecked(), self.button_confirm))
-
-        # Result label: Change to text field
-        #self.result_label = QLabel('', self)
-        self.result_label = QLineEdit(self)
-        self.result_label.setStyleSheet("font-size: 20px;")
-        self.result_label.setAlignment(QtCore.Qt.AlignCenter)
-
-        # Just wanted to try adding an image, might delete later
-        image = QPixmap("cardboard_meme.jpg")
-        resized_image = image.scaled(280, 280)
-        self.image_label = QLabel()
-        self.image_label.setPixmap(resized_image)
-        self.image_label.setAlignment(QtCore.Qt.AlignCenter) # not really needed
-
-        layout.addWidget(self.intro_label)
-        layout.addWidget(self.image_label)
-        layout.addWidget(rb_fantasy)
-        layout.addWidget(rb_paranoia)
-        layout.addWidget(self.button_confirm)
-        layout.addWidget(self.result_label)
-        
-
-    def on_click(self, check, label):
-        if check:
-            if debug_mode == True: print("Paranoia")
-            sector_generated = generate_sector_name()
-            clone_nr_generated = str(generate_clone_number())
-            name = generate_first_name_rnd() + "-" + sector_generated + "-" + clone_nr_generated
-            self.result_label.setText(name)
-            if debug_mode == True: print(name)
-        else:
-            name = generate_fantasy()
-            self.result_label.setText(name.capitalize())
-            if debug_mode == True: print(name)
-    
-    def button_confirm_pressed(self):
-            #sector_generated = generate_sector_name()
-            #self.result_label.setText(generate_paranoia(sector_generated))
-            print("Button pressed")
-            #self.update_intro()
-        
-    def update_intro(self):
-        self.intro_label.adjustSize()
-
-    def update_radio(self):
-        # get the radio button the send the signal
-        rb = self.sender()
-        # Debug-check if the radio button is checked
-        #if rb.isChecked():
-            #self.result_label.setText(f'You selected {rb.text()}')
-
-    def paranoia_selected(self, selected):
-        if selected: print("Paranoia selected.")
-
-    def fantasy_selected(self, selected):
-        if selected: print("Fantasy selected.")
+# Might want to change filemode back to "w" when debugging -
+# Having it set to "a" appends new log entries to the same file
+# which could be handy for users trying to find generated names 
+logging.basicConfig(
+    level=logging.INFO,
+    filename="RNG.log",
+    filemode="a",
+    format="%(asctime)s: %(levelname)s - %(message)s"
+)
 
 
-def window():
-    app = QApplication(sys.argv)
-    win = WindowMaker()
-    # Actually show the window (and make sure that it exits on "x")
-    win.show()
-    sys.exit(app.exec_())
+# Basic setup
+root = Tk()
 
+# Available name parts
 first_names_f = ["Cor-A", "Bett-Y", "Dar-A", "Bann-I", "Ver-A", "Ver-O", "Chlo-E", "Hosh-I", "Stin-E", "Petr-A", "Laur-A", "Fatim-A", "Aysh-E", "Frey-A", "Lydi-A", "Gin-A", 
     "Gret-L", "Zo-E", "Zor-A", "Nadi-A", "The-A", "Chihir-O", "Han-A", "Hir-O", "Katan-A", "Ing-A", "Mar-I", "Alb-A", "Clar-A", "Dor-O", "Sierr-A", "Iri-S", "Kar-N", 
     "Lex-I", "Lilli-T", "Marg-A", "Marg-O", "Per-I", "Titani-A", "Urs-A", "Ursul-A", "Anik-A", "Amel-I", "Beck-Y", "Nel-E", "Ima-N", "Ki-A", "Mbal-I", "Ut-E", "Fel-O",
@@ -145,84 +53,117 @@ def generate_fantasy():
         name_parts = name_parts - 1
         pick = random.randint(0, max)
         name = name + fantasy_parts[pick]
-        if debug_mode == True: print(name)
+        logging.debug("Fantasy name part %s generated", name)
+    result_label["text"] = name.capitalize()
+    logging.debug("Fantasy name %s passed to result label", name)
+    logging.info("Fantasy name %s generated", name.capitalize())
     return name
     
-
-#def generate_paranoia(sector):
-    ## results = f'{generate_first_name("m"())}-{generate_sector_name()}-{generate_clone_number()}'
-    #clone_nr_generated = str(generate_clone_number())
-    #results = generate_first_name_rnd + "-" + sector + "-" + clone_nr_generated # generate_first_name("m") + "-" + str(generate_sector_name)
-    #print(generate_sector_name)
-    #print(str(generate_sector_name))
-    #return results
-
 def generate_first_name_rnd():
     gender_nr = random.randint(1,3)
     match gender_nr:
         case 1:
-            max = len(first_names_m) - 1
+            max = len(first_names_f) - 1
             pick = random.randint(0, max)
+            logging.debug("Random gender name %s picked", first_names_m[pick])
             return first_names_m[pick]
         case 2:
             max = len(first_names_f) - 1
             pick = random.randint(0, max)
+            logging.debug("Random gender name %s picked", first_names_f[pick])
             return first_names_f[pick]
         case 3:
             max = len(first_names_n) - 1
             pick = random.randint(0, max)
+            logging.debug("Random gender name %s picked", first_names_n[pick])
             return first_names_n[pick]
-
-def generate_first_name(user_input):
-    match user_input:
-        case "m":
-            max = len(first_names_m) - 1
-            pick = random.randint(0, max)
-            return first_names_m[pick]
-        case "f":
-            max = len(first_names_f) - 1
-            pick = random.randint(0, max)
-            return first_names_f[pick]
-        case "n":
-            max = len(first_names_n) - 1
-            pick = random.randint(0, max)
-            return first_names_n[pick]
-        case "c":
-            count_first_names()
-            input("Press any key to close.")
-            quit()
-        case "x":
-            print("Thank you for using this program. Exiting ...")
-            quit()
-        case _: 
-            return "[Error: Gender not found.]"
 
 def generate_sector_name():
     max = len(sector_code) - 1
-    max_str = str(max)
-    if debug_mode == True: print("max: " + max_str)
+    logging.debug("Sector names available: %s", str(max))
     pick = random.randint(1, max)
-    pick_str = str(pick)
-    if debug_mode == True:
-        print("pick: " + pick_str)
-        print("pick as a string: " + sector_code[pick])
+    logging.debug("Sector %s chosen, name %s generated", str(pick), sector_code[pick])
     return sector_code[pick]
 
 def generate_clone_number():
     rcn = random.randint(1, 6)
+    logging.debug("Clone number generated: %s", str(rcn))
     return str(rcn)
 
 def count_first_names():
-    print("Female first names: " + str(len(first_names_f)))
-    print("Male first names: " + str(len(first_names_m)))
-    print("Enby first names: " + str(len(first_names_n)))
+    logging.debug(
+        "Female first names: %s\nMale first names: %s\nEnby first names: %s",
+        str(len(first_names_f)), str(len(first_names_m)), str(len(first_names_n))
+    )
 
-# Execute!
-global debug_mode
-debug_mode = False
+# GUI functions
+def button_generate_func(radio_status):
+    if radio_status == 1: # Fantasy
+        logging.debug("Radio button 'fantasy' clicked")
+        generate_fantasy()
+    elif radio_status == 2: # Paranoia RPG
+        logging.debug("Radio button 'paranoia' clicked")
+        result_label["text"] = generate_first_name_rnd() + "-" + generate_sector_name().upper() + "-" + generate_clone_number()
+        logging.debug("Paranoia name %s passed to result label", result_label["text"])
+        logging.info("Paranoia name %s generated", result_label["text"])
+    else:
+        logging.error("Undefined radio button clicked")
+
+## Text for Labels (and other elements) ##
+root.title("Random Name Generator")
+intro_text = "Welcome to the Random Name Generator."
+middle_text = "Choose a theme."
+frb_text = "Fantasy           " # I feel deeply ashamed. Will sure fix this later ...
+prb_text = "Paranoia RPG"
+button_text = "Generate name!"
+result_text = "Click generate name \nto get started!"
+
+## Window Size, Position, Layout ##
+bg_color = '#c0d6e4'
+width, height = 300, 300
+screen_w, screen_h = root.winfo_screenwidth(), root.winfo_screenheight()
+winpos_x, winpos_y = int(screen_w/2 - width/2), int(screen_h/2 - height/2)
+
+root.geometry(f'{width}x{height}+{winpos_x}+{winpos_y}') # make sure the window is centered on user's screen
+root.configure(bg=bg_color)
+root.resizable(False, False)
+# Add Icon
+# Colors
+
+## Creating labels and buttons (and the window) ##
+intro_label = Label(root, text=intro_text, font=('Helvetica bold', 10), background=bg_color)
+
+middle_label = Label(root, text=middle_text, font=('Helvetica bold', 10), pady=5, background=bg_color)
+buffer_label_1 = Label(root, text="", pady=5, background=bg_color)
+buffer_label_2 = Label(root, text="", pady=5, background=bg_color)
+button_generate = Button(root, text=button_text, font=('Helvetica bold', 10), padx=10, pady=8, command=lambda: button_generate_func(rbval.get()), background="#63D471", fg="#5E4B56")
+result_label = Label(root, text=result_text, pady=10, font=('Helvetica bold', 16), width=40, background='#468499')
+#result_textfield = Text(root, height=2, width=10)
+rbval = IntVar()
+rbval.set("1")
+
+radio_fantasy = Radiobutton(root, text=frb_text, variable=rbval, value=1, command=rbval.get(), width=10, background=bg_color)
+radio_paranoia = Radiobutton(root, text=prb_text, variable=rbval, value=2, command=rbval.get(), width=10, background=bg_color)
+
+## Putting stuff on screen ##
+# Could do all this in one line - but readability would suck:
+# intro_label = Label(root, text="Welcome to the Random Name Generator.\nChoose a theme.").grid(row=0, column=0)
+# stick="W"
+root.grid_columnconfigure(0, weight=1) # This centers the widgets of the grid in parent window
+intro_label.grid(row=0, column=0)
+middle_label.grid(row=1, column=0)
+radio_fantasy.grid(row=2, column=0)
+radio_paranoia.grid(row=3, column=0)
+buffer_label_1.grid(row=4, column=0)
+button_generate.grid(row=5, column=0)
+buffer_label_2.grid(row=6, column=0)
+result_label.grid(row=7, column=0)
+#result_textfield.grid(row=6, column=0)
+#result_textfield.insert('end', update_text_field()) # Doesn't update yet
 
 global sector_generated
 global clone_nr_generated
 sector_generated = generate_sector_name()
 clone_nr_generated = str(generate_clone_number())
-window()
+
+root.mainloop()
