@@ -1,9 +1,9 @@
+## This is just a legacy file with my first steps ##
+## All work is now being done in ParanoiaRandomNameGeneratorGUI.py ##
+## This is still very much functional, but lacks a GUI ##
+
 import random
 import time
-# Necessary imports for GUI/PyQt:
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow
-import sys
 
 # Paranoia names follow this pattern:
 # {first name-some letter}-{3-character-sector-code}-{clone number}
