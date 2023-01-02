@@ -63,7 +63,7 @@ def generate_first_name_rnd():
     gender_nr = random.randint(1,3)
     match gender_nr:
         case 1:
-            max = len(first_names_f) - 1
+            max = len(first_names_m) - 1
             pick = random.randint(0, max)
             logging.debug("Random gender name %s picked", first_names_m[pick])
             return first_names_m[pick]
